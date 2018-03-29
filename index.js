@@ -117,14 +117,13 @@ const Fm = {
         })
         $('.icon-next').on('click', () => {
             this.loadMusic(this.id)
-            $('.icon-pause').css({display:'none'}).siblings().css({display:'inline-block'})
         })
     },
     loadMusic: function(id) {
         $.getJSON('//jirenguapi.applinzi.com/fm/getSong.php', { channel: this.id }).done((response) => {
             this.song = response.song[0]
-            console.log(this.song)
             this.setMusic()
+            $('.icon-pause').css({display:'none'}).siblings().css({display:'inline-block'})
         }).fail((error) => {
             console.log(error)
         })
@@ -139,8 +138,8 @@ const Fm = {
         $('#page-music .aside').prepend('<figure></figure>')
         this.song.picture ? $('figure').css({backgroundImage: 'url(' + this.song.picture + ')'}) : $('figure').css({backgroundImage: 'url(' + this.defaultSong.picture + ')'})
         this.song.title ? $('.detail h1').text(this.song.title) : $('.detail h1').text(this.defaultSong.title)
-        $('.detail .tag').text(this.label)
-        $('.author').text(this.song.artist)
+        this.$container.find('.detail .tag').text(this.label)
+        this.$container.find('.author').text(this.song.artist)
     }
 }
 
