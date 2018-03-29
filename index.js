@@ -58,7 +58,7 @@ const Footer = {
         })
     },
     render: function () {
-        $.getJSON('http://api.jirengu.com/fm/getChannels.php').done((response) => {
+        $.getJSON('//api.jirengu.com/fm/getChannels.php').done((response) => {
             console.log(response)
             this.$channels = response.channels
             this.renderFooter(response.channels)
