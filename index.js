@@ -58,7 +58,7 @@ const Footer = {
         })
     },
     render: function () {
-        $.getJSON('//api.jirengu.com/fm/getChannels.php').done((response) => {
+        $.getJSON('https://jirenguapi.applinzi.com/fm/getChannels.php').done((response) => {
             console.log(response)
             this.$channels = response.channels
             this.renderFooter(response.channels)
@@ -117,6 +117,7 @@ const Fm = {
         })
         $('.icon-next').on('click', () => {
             this.loadMusic(this.id)
+            $('.icon-pause').css({display:'none'}).siblings().css({display:'inline-block'})
         })
     },
     loadMusic: function(id) {
