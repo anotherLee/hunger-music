@@ -118,6 +118,18 @@ const Fm = {
         $('.icon-next').on('click', () => {
             this.loadMusic(this.id)
         })
+        this.audio.addEventListener('play', function() {
+            window.clearInterval(this.statusClock)
+            this.statusClock = window.setInterval(() => {
+                this.updateTime()
+            }, 1000)
+        }.bind(this))
+        this.audio.addEventListener('pause', function() {
+            window.clearInterval(this.statusClock)
+        }.bind(this))
+        this.audio.addEventListener('timeupdate', () => {
+                        
+        })
     },
     loadMusic: function(id) {
         $.getJSON('//jirenguapi.applinzi.com/fm/getSong.php', { channel: this.id }).done((response) => {
@@ -140,6 +152,15 @@ const Fm = {
         this.song.title ? $('.detail h1').text(this.song.title) : $('.detail h1').text(this.defaultSong.title)
         this.$container.find('.detail .tag').text(this.label)
         this.$container.find('.author').text(this.song.artist)
+    },
+    updateTime: function() {
+        console.log(this.audio.duration)
+        let currentTime = this.audio.currentTime
+        let min = Math.floor(currentTime/60) + ''
+        let second = Math.floor(currentTime % 60)
+        second = second < 10 ? '0' + second : '' + second
+        this.$container.find('.currentTime').text(`${min}:${second}`)
+        $('.progress').css({width: (this.audio.currentTime) /this.audio.duration*100 + '%'})
     }
 }
 
