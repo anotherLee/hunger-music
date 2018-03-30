@@ -127,14 +127,12 @@ const Fm = {
         this.audio.addEventListener('pause', function() {
             window.clearInterval(this.statusClock)
         }.bind(this))
-        this.audio.addEventListener('timeupdate', () => {
-                        
-        })
     },
     loadMusic: function(id) {
         $.getJSON('//jirenguapi.applinzi.com/fm/getSong.php', { channel: this.id }).done((response) => {
             this.song = response.song[0]
             this.setMusic()
+            this.loadLyric(this.song.sid)
             $('.icon-pause').css({display:'none'}).siblings().css({display:'inline-block'})
         }).fail((error) => {
             console.log(error)
@@ -153,14 +151,32 @@ const Fm = {
         this.$container.find('.detail .tag').text(this.label)
         this.$container.find('.author').text(this.song.artist)
     },
+    loadLyric: function(sid) {
+        $.getJSON('//jirenguapi.applinzi.com/fm/getLyric.php', { sid: sid }).done((response) => {
+            let lyricObj = {}
+            let lyric = response.lyric
+            lyric.split('\n').forEach(function(line) {
+                let times = line.match(/\d{2}:\d{2}/g)
+                let str = line.replace(/\[.+?\]/g, '')
+                if (Array.isArray(times)) { 
+                    times.forEach(function(item){
+                        lyricObj[item] = str
+                    })
+                }        
+            })
+            this.lyricObj = lyricObj
+            console.log(this.lyricObj)
+        })
+    },
     updateTime: function() {
-        console.log(this.audio.duration)
         let currentTime = this.audio.currentTime
         let min = Math.floor(currentTime/60) + ''
         let second = Math.floor(currentTime % 60)
         second = second < 10 ? '0' + second : '' + second
         this.$container.find('.currentTime').text(`${min}:${second}`)
         $('.progress').css({width: (this.audio.currentTime) /this.audio.duration*100 + '%'})
+        let currentLine = this.lyricObj['0' + min + ':' + second]
+        if(currentLine) $('.lyric p').text(currentLine)
     }
 }
 
