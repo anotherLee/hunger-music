@@ -107,11 +107,11 @@ const Fm = {
             this.label = data.name
             this.loadMusic(this.id)
         })
-        $('.icon-play').on('click', function() {
+        $('.icon-pause').on('click', function() {
             $(this).css({display:'none'}).siblings().css({display:'inline-block'})
             _this.audio.pause()
         })
-        $('.icon-pause').on('click', function() {
+        $('.icon-play').on('click', function() {
             $(this).css({display:'none'}).siblings().css({display:'inline-block'})
             _this.audio.play()
         })
@@ -133,7 +133,7 @@ const Fm = {
             this.song = response.song[0]
             this.setMusic()
             this.loadLyric(this.song.sid)
-            $('.icon-pause').css({display:'none'}).siblings().css({display:'inline-block'})
+            $('.icon-play').css({display:'none'}).siblings().css({display:'inline-block'})
         }).fail((error) => {
             console.log(error)
         })

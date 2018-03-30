@@ -62,7 +62,7 @@ main .aside > .actions{
 .aside span:hover{
     color:white;
 }
-.aside .icon-pause{
+.aside .icon-play{
     display:none;
 }
 .aside .status{
