@@ -59,7 +59,6 @@ const Footer = {
     },
     render: function () {
         $.getJSON('https://jirenguapi.applinzi.com/fm/getChannels.php').done((response) => {
-            console.log(response)
             this.$channels = response.channels
             this.renderFooter(response.channels)
         }).fail((error) => {
@@ -106,7 +105,6 @@ const Fm = {
             this.id = data.data_channel_id
             this.label = data.name
             this.loadMusic(this.id)
-            $('.progress').css({ width:0 })
         })
         $('.icon-switch').on('click', function() {
             if ($(this).hasClass('icon-pause')) {
@@ -130,9 +128,11 @@ const Fm = {
             window.clearInterval(this.statusClock)
         }.bind(this))
         this.audio.addEventListener('timeupdate', function() {
-            console.log(this.audio.currentTime)
             $('.progress').css({width: (this.audio.currentTime) /this.audio.duration*100 + '%'})
         }.bind(this))
+        this.audio.addEventListener('ended', () => {
+            $('.icon-switch').removeClass('icon-pause').addClass('icon-play')
+        })
     },
     loadMusic: function(id) {
         $.getJSON('//jirenguapi.applinzi.com/fm/getSong.php', { channel: this.id }).done((response) => {
@@ -170,7 +170,6 @@ const Fm = {
                 }        
             })
             this.lyricObj = lyricObj
-            console.log(this.lyricObj)
         })
     },
     updateTime: function() {
