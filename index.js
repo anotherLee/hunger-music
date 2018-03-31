@@ -106,14 +106,16 @@ const Fm = {
             this.id = data.data_channel_id
             this.label = data.name
             this.loadMusic(this.id)
+            $('.progress').css({ width:0 })
         })
-        $('.icon-pause').on('click', function() {
-            $(this).css({display:'none'}).siblings().css({display:'inline-block'})
-            _this.audio.pause()
-        })
-        $('.icon-play').on('click', function() {
-            $(this).css({display:'none'}).siblings().css({display:'inline-block'})
-            _this.audio.play()
+        $('.icon-switch').on('click', function() {
+            if ($(this).hasClass('icon-pause')) {
+                $(this).removeClass('icon-pause').addClass('icon-play')
+                _this.audio.pause()            
+            } else if ($(this).hasClass('icon-play')) {
+                $(this).removeClass('icon-play').addClass('icon-pause')
+                _this.audio.play()            
+            }             
         })
         $('.icon-next').on('click', () => {
             this.loadMusic(this.id)
@@ -127,19 +129,22 @@ const Fm = {
         this.audio.addEventListener('pause', function() {
             window.clearInterval(this.statusClock)
         }.bind(this))
+        this.audio.addEventListener('timeupdate', function() {
+            console.log(this.audio.currentTime)
+            $('.progress').css({width: (this.audio.currentTime) /this.audio.duration*100 + '%'})
+        }.bind(this))
     },
     loadMusic: function(id) {
         $.getJSON('//jirenguapi.applinzi.com/fm/getSong.php', { channel: this.id }).done((response) => {
             this.song = response.song[0]
             this.setMusic()
             this.loadLyric(this.song.sid)
-            $('.icon-play').css({display:'none'}).siblings().css({display:'inline-block'})
+            $('.icon-switch').removeClass('icon-play').addClass('icon-pause')
         }).fail((error) => {
             console.log(error)
         })
     },
     setMusic: function() {
-        console.log('set music...')
         this.song.url ? this.audio.src = this.song.url : this.audio.src = this.defaultSong.url
         $('.bg').remove()
         $('body').append('<div class="bg"></div>')
@@ -174,7 +179,6 @@ const Fm = {
         let second = Math.floor(currentTime % 60)
         second = second < 10 ? '0' + second : '' + second
         this.$container.find('.currentTime').text(`${min}:${second}`)
-        $('.progress').css({width: (this.audio.currentTime) /this.audio.duration*100 + '%'})
         let currentLine = this.lyricObj['0' + min + ':' + second]
         if(currentLine) $('.lyric p').text(currentLine)
     }
